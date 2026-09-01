@@ -4,12 +4,22 @@ name: Compilar PDF
 #  - push na main        -> gera o PDF do estado atual do projeto
 #  - pull request        -> gera o PDF da proposta, para revisao antes do merge
 #  - tag v*              -> publica o PDF numa release, com link permanente
+#
+# O filtro "paths" evita execucao a toa: mexer no README, no .vscode ou no
+# .gitignore nao compila nada. So dispara o que afeta o PDF — o conteudo em
+# latex/ e o proprio workflow.
 on:
   push:
     branches: [main]
     tags: ['v*']
+    paths:
+      - 'latex/**'
+      - '.github/workflows/build-pdf.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'latex/**'
+      - '.github/workflows/build-pdf.yml'
   workflow_dispatch:      # permite disparar na mao pela aba Actions
 
 # Se alguem der varios pushes seguidos, cancela as execucoes antigas:
