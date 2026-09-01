@@ -1,0 +1,72 @@
+% !TEX root = ../projeto-pesquisa.tex
+% =====================================================================
+%  INTRODUÇÃO
+% =====================================================================
+\newpage
+\secao{Introdução}
+\justifying
+O avanço das tecnologias de inteligência artificial tem transformado
+significativamente a produção e circulação de conteúdos digitais, especialmente
+no que se refere à geração de imagens altamente realistas. Esse cenário amplia os
+desafios relacionados à verificação da autenticidade de imagens digitais, uma vez
+que modelos generativos são capazes de produzir conteúdos visualmente coerentes e
+difíceis de distinguir de registros reais. Segundo Padilha \textit{et al.} (2021,
+p. 131), o ambiente digital contemporâneo já é marcado por uma elevada presença
+de conteúdos manipulados, incluindo montagens, informações fora de contexto e
+materiais que dificultam a identificação de sua veracidade.
+
+De acordo com as empresas DeepStrike (2025) e Bright Defense (2026), o volume de
+\textit{deepfakes} (imagens, vídeos e áudios sintéticos) compartilhados
+\textit{online} explodiu nos últimos anos: passou de aproximadamente 500 mil em
+2023 para uma projeção de 8 milhões em 2025, representando um crescimento anual
+de cerca de 1.500\%.
+
+Nesse contexto, o presente projeto aborda a análise de padrões e inconsistências
+na identificação de imagens geradas por inteligência artificial, com foco em
+\textit{deepfakes} e demais formas de manipulação digital. A proposta consiste no
+desenvolvimento de uma solução tecnológica voltada à análise de imagens, como uma
+plataforma \textit{online}, capaz de apoiar a verificação da autenticidade de
+arquivos digitais. Essa necessidade se intensifica diante da crescente
+sofisticação dos modelos generativos, que ampliam o potencial de disseminação de
+desinformação e golpes digitais no ambiente \textit{online}.
+
+O problema central da pesquisa está relacionado à dificuldade de distinguir
+imagens reais de imagens sintéticas, especialmente em casos de manipulação como o
+\textit{copy-move}, em que a distribuição estatística dos \textit{pixels} pode
+permanecer semelhante à original, dificultando a detecção visual e automatizada.
+De acordo com Nagm \textit{et al.} (2024, p. 2), esse tipo de adulteração
+representa um desafio relevante na área de forense digital, justamente por
+preservar características estatísticas da imagem, o que compromete métodos
+tradicionais de detecção baseados apenas em análise visual ou estatística
+superficial.
+
+Ainda nesse contexto, técnicas como a Análise de Nível de Erro (ELA) são
+utilizadas para evidenciar inconsistências em imagens, por meio da amplificação
+de diferenças de compressão que podem indicar possíveis manipulações (Nagm
+\textit{et al.}, 2024, p. 4). No entanto, com o avanço dos modelos generativos de
+alta fidelidade, a eficácia dessas abordagens tem sido reduzida, exigindo a
+integração com métodos mais robustos, como redes neurais convolucionais (CNN),
+capazes de identificar padrões complexos de manipulação, além da análise de
+metadados EXIF, que fornecem informações técnicas sobre a origem e o histórico de
+processamento das imagens (Yang \textit{et al.}, 2026, p. 15).
+
+Estudos recentes mostram que a precisão humana na detecção de \textit{deepfakes}
+fica em torno de 50--55\% (próxima ao nível de acaso), e apenas 0,1\% dos
+participantes consegue identificar corretamente todos os conteúdos sintéticos e
+reais apresentados (iProov, 2025).
+
+Além disso, abordagens contemporâneas indicam que a autenticação de mídias
+digitais não deve se basear apenas na análise do conteúdo visual, mas também na
+verificação da proveniência e integridade dos arquivos. Segundo England
+\textit{et al.} (2020, p. 115), em um cenário próximo, nem humanos nem algoritmos
+serão capazes de distinguir de forma confiável conteúdos falsos de conteúdos
+reais apenas pela aparência, tornando necessária a adoção de sistemas de
+verificação baseados em origem, integridade e rastreabilidade da mídia.
+
+A execução do projeto justifica-se pela necessidade de fortalecer a segurança
+digital e promover o pensamento crítico no uso de mídias digitais. Dessa forma, o
+projeto contribui para a formação acadêmica dos envolvidos, ao aplicar
+conhecimentos de inteligência artificial, ciência de dados e segurança da
+informação em um problema real, além de possuir relevância social ao auxiliar na
+mitigação da desinformação e na promoção de um ambiente digital mais confiável.
+

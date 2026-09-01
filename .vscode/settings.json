@@ -1,0 +1,52 @@
+{
+  // ---- LaTeX Workshop: PDF atualizado em tempo real ----
+  // Salvar o .tex (Ctrl+S) dispara a compilacao e recarrega o PDF na aba ao lado.
+
+  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.view.pdf.viewer": "tab",
+
+  // O arquivo mestre esta em latex/, nao na raiz do workspace. Sem isto o
+  // LaTeX Workshop nao encontra o \documentclass ao salvar um arquivo de
+  // secoes/ e nao compila nada. Os arquivos em secoes/ tambem trazem a
+  // linha "% !TEX root = ../projeto-pesquisa.tex" como reforco.
+  "latex-workshop.latex.search.rootFiles.include": ["latex/**/*.tex"],
+  "latex-workshop.latex.rootFile.doNotPrompt": true,
+
+  "latex-workshop.latex.tools": [
+    {
+      "name": "pdflatex",
+      "command": "pdflatex",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-output-directory=%OUTDIR%",
+        "%DOC%"
+      ],
+      // Vazio de proposito: o MiKTeX ja esta no PATH do usuario, herdado pelo
+      // VS Code. Nao defina "PATH" aqui — este campo nao expande ${env:...},
+      // entao o valor entraria literal e anularia o PATH real do processo.
+      "env": {}
+    }
+  ],
+
+  // Duas passadas: a segunda resolve o sumario e as referencias internas.
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "pdflatex x2",
+      "tools": ["pdflatex", "pdflatex"]
+    }
+  ],
+
+  // Arquivos auxiliares (.aux, .log, .toc) ficam em latex/build/, longe do .tex.
+  "latex-workshop.latex.outDir": "%DIR%/build",
+  "latex-workshop.latex.autoClean.run": "never",
+
+  // Avisos tipograficos (overfull/underfull box) nao interrompem o fluxo.
+  "latex-workshop.message.badbox.show": "none",
+  "latex-workshop.message.error.show": true,
+
+  "files.associations": {
+    "*.tex": "latex"
+  }
+}

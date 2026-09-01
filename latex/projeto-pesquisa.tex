@@ -1,0 +1,87 @@
+% =====================================================================
+%  ANÁLISE DE PADRÕES E INCONSISTÊNCIA PARA IDENTIFICAÇÃO DE IMAGENS
+%  GERADAS POR IA
+%  Centro Universitário Fundação Santo André — 2026
+%  Compilar com: pdflatex projeto-pesquisa.tex  (rodar 2x p/ o sumário)
+% =====================================================================
+\documentclass[12pt,a4paper,oneside]{article}
+
+% ---------- Codificação e idioma ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english,brazil]{babel}
+\usepackage{lmodern}
+
+% ---------- Layout ABNT (margens 3/2/3/2 cm) ----------
+\usepackage[top=3cm,bottom=2cm,left=3cm,right=2cm]{geometry}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{ragged2e}
+
+% ---------- Recursos ----------
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{figuras/}}
+
+% ---------- Seções não numeradas, em caixa alta, no sumário ----------
+\newcommand{\secao}[1]{%
+  \section*{\MakeUppercase{#1}}%
+  \addcontentsline{toc}{section}{\MakeUppercase{#1}}%
+}
+
+\setlength{\parindent}{1.25cm}
+\onehalfspacing
+
+% ---------- Figura de anexo: \figuraanexo{nº}{legenda}{arquivo}{fonte} ----------
+% Se o arquivo não existir em figuras/, imprime um espaço reservado.
+\newcommand{\figuraanexo}[4]{%
+  \begin{figure}[htb]
+    \centering
+    {\footnotesize Figura #1 -- #2\par}
+    \vspace{2mm}
+    \IfFileExists{figuras/#3}%
+      {\includegraphics[width=0.75\textwidth]{#3}}%
+      {\fbox{\parbox[c][4cm][c]{0.7\textwidth}{\centering\textit{[inserir arquivo figuras/#3]}}}}%
+    \vspace{2mm}
+    {\footnotesize\justifying Fonte: #4\par}
+  \end{figure}%
+}
+
+\newcommand{\fontekingambit}{Gerado por Kingambit (2026), utilizando o
+\textit{prompt}: ``Faça uma apresentação para estudantes do ensino médio com
+base no projeto criado pelo grupo.''}
+
+\begin{document}
+
+% =====================================================================
+%  ORDEM DO DOCUMENTO
+%
+%  Cada secao vive em seu proprio arquivo dentro de secoes/.
+%  Assim duas pessoas editando partes diferentes nunca colidem no git.
+%  \input insere o conteudo do arquivo aqui, como se estivesse digitado
+%  neste ponto: a saida continua sendo um unico PDF.
+%
+%  Para compilar so a sua secao enquanto escreve (bem mais rapido),
+%  comente as linhas \input das outras. Lembre de descomentar antes de
+%  commitar.
+% =====================================================================
+
+\input{secoes/00-capa}
+\input{secoes/01-resumo-abstract}
+\input{secoes/02-listas-sumario}
+\input{secoes/03-introducao}
+\input{secoes/04-tema-justificativa}
+\input{secoes/05-objetivos}
+\input{secoes/06-metodologia}
+\input{secoes/07-recursos-cronograma}
+\input{secoes/08-referencias}
+\input{secoes/09-anexos}
+
+\end{document}

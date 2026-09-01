@@ -1,0 +1,73 @@
+name: Compilar PDF
+
+# Quando roda:
+#  - push na main        -> gera o PDF do estado atual do projeto
+#  - pull request        -> gera o PDF da proposta, para revisao antes do merge
+#  - tag v*              -> publica o PDF numa release, com link permanente
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:      # permite disparar na mao pela aba Actions
+
+# Se alguem der varios pushes seguidos, cancela as execucoes antigas:
+# so interessa o PDF do commit mais recente.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: pdflatex
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write     # necessario para criar a release nas tags
+
+    steps:
+      - name: Baixar o repositorio
+        uses: actions/checkout@v4
+
+      # Compila dentro de latex/. A imagem ja traz o TeX Live completo,
+      # entao nao ha nada para instalar — nem aqui, nem na maquina de ninguem.
+      # O latexmk decide sozinho quantas passadas sao necessarias para o
+      # sumario e as referencias internas fecharem.
+      - name: Compilar projeto-pesquisa.tex
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: latex
+          root_file: projeto-pesquisa.tex
+          latexmk_shell_escape: false
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+
+      # O PDF fica disponivel para download na aba Actions, na execucao
+      # correspondente. Quem quiser ver o estado atual do projeto nao precisa
+      # de LaTeX instalado: baixa daqui.
+      - name: Publicar o PDF como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: projeto-pesquisa-${{ github.sha }}
+          path: latex/projeto-pesquisa.pdf
+          if-no-files-found: error
+          retention-days: 90
+
+      # Em marcos de entrega (tag), o PDF ganha um link fixo e imutavel.
+      # Criar a tag:  git tag -a v1.0-escola -m "Apresentacao na escola"
+      #               git push origin v1.0-escola
+      - name: Anexar o PDF a release da tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: latex/projeto-pesquisa.pdf
+          generate_release_notes: true
+
+      # Se a compilacao falhar, o log do LaTeX explica onde. Sem isto,
+      # quem quebrou o documento so ve "o build falhou".
+      - name: Guardar o log em caso de falha
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-da-falha
+          path: latex/*.log
+          if-no-files-found: ignore
