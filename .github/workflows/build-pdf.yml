@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Baixar o repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Compila dentro de latex/. A imagem ja traz o TeX Live completo,
       # entao nao ha nada para instalar — nem aqui, nem na maquina de ninguem.
@@ -45,7 +45,7 @@ jobs:
       # correspondente. Quem quiser ver o estado atual do projeto nao precisa
       # de LaTeX instalado: baixa daqui.
       - name: Publicar o PDF como artefato
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: projeto-pesquisa-${{ github.sha }}
           path: latex/projeto-pesquisa.pdf
@@ -57,7 +57,7 @@ jobs:
       #               git push origin v1.0-escola
       - name: Anexar o PDF a release da tag
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: latex/projeto-pesquisa.pdf
           generate_release_notes: true
@@ -66,7 +66,7 @@ jobs:
       # quem quebrou o documento so ve "o build falhou".
       - name: Guardar o log em caso de falha
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: log-da-falha
           path: latex/*.log
