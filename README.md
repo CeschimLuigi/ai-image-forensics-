@@ -285,7 +285,6 @@ com falha silenciosa.
 ```
 acex/
 ├─ README.md                        # este documento (requisitos)
-├─ Projeto Acadêmico de Pesquisa.md # texto do projeto (fonte original)
 ├─ latex/
 │  ├─ projeto-pesquisa.tex          # arquivo mestre: preâmbulo + ordem
 │  ├─ build.ps1                     # compilação manual / modo -Watch
