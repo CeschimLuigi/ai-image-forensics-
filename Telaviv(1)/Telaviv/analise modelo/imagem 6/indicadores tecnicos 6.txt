@@ -1,0 +1,35 @@
+ELA
+alta
+Baixa variacao ELA
+A imagem apresenta niveis de compressao muito uniformes. Isso pode indicar que a imagem foi gerada sinteticamente ou recomprimida multiplas vezes.
+Nível de desvio estrutural: 3.792
+ELA
+alta
+Desvio ELA baixo
+A distribuicao do erro de compressao e muito homogenea. Comum em imagens geradas por IA, que nao passam por compressao JPEG real.
+Nível de desvio estrutural: 3.0758
+Ruido
+baixa
+Ruido dentro do esperado
+A distribuicao de ruido e consistente com uma imagem capturada por camera real.
+Nível de desvio estrutural: 26.7418
+FFT
+media
+Simetria espectral elevada
+O espectro de frequencias apresenta simetria acima do comum. Merece atencao.
+Nível de desvio estrutural: 0.9553
+Correlacao RGB
+baixa
+Correlacao entre canais normal
+A relacao entre os canais de cor e consistente com uma fotografia natural.
+Nível de desvio estrutural: 0.9138
+Aberracao Cromatica
+media
+Aberracao cromatica excessiva
+A imagem apresenta aberracao cromatica acima do normal. Pode indicar manipulacao nas bordas ou uso de lentes de baixa qualidade.
+Nível de desvio estrutural: 0.6359
+Gradiente
+baixa
+Transicoes dentro do esperado
+O padrao de transicoes e bordas e consistente com uma fotografia natural.
+Nível de desvio estrutural: 127.2177

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingambit</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            slate: '#f8fafc', /* Light mode background Slate 50 */
+                            slateLight: '#ffffff',
+                            accent: '#4f46e5', /* Indigo 600 */
+                            alert: '#dc2626', /* Red 600 */
+                            success: '#16a34a', /* Green 600 */
+                            warning: '#d97706' /* Amber 600 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f4f4f5; /* Zinc 100 */
+        }
+        
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Subtle gray card shadow */
+        .glow-card {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: all 0.3s ease;
+        }
+        .glow-card:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f4f4f5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d8;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1aa;
+        }
+    </style>
+</head>
+<body class="text-zinc-800 min-h-screen flex flex-col antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="border-b border-zinc-200 bg-white sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Title / Logo -->
+                <div class="flex items-center">
+                    <span class="text-xl font-extrabold tracking-tight text-zinc-900">Kingambit</span>
+                </div>
+
+                <!-- Tabs (SPA navigation) -->
+                <nav class="flex space-x-1" aria-label="Tabs">
+                    <button onclick="switchTab('tab-comparativo')" id="btn-tab-comparativo" class="tab-button px-4 py-2 text-sm font-medium rounded-lg border border-transparent transition-all duration-200 bg-indigo-50 text-indigo-600 border-indigo-100">
+                        Comparativo por Imagem
+                    </button>
+                    <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="tab-button px-4 py-2 text-sm font-medium rounded-lg border border-transparent transition-all duration-200 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100">
+                        Dashboard Geral
+                    </button>
+                    <button onclick="switchTab('tab-respostas')" id="btn-tab-respostas" class="tab-button px-4 py-2 text-sm font-medium rounded-lg border border-transparent transition-all duration-200 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100">
+                        Respostas & Feedback
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ==================== PÁGINA 1: COMPARATIVO POR IMAGEM ==================== -->
+        <section id="page-comparativo" class="space-y-8">
+            
+            <!-- Título da Seção e Explicação -->
+            <div class="border-b border-zinc-200 pb-4">
+                <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Análise Comparativa Individual</h1>
+                <p class="text-sm text-zinc-500 mt-1">Comparação detalhada entre as respostas dos alunos e o veredito técnico da plataforma forense para cada imagem do teste.</p>
+            </div>
+
+            <!-- BLOCO 1: Imagem em Análise & Desempenho / Perfil -->
+            <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-lg font-semibold text-zinc-800">Imagem em Análise & Desempenho</h2>
+                        <p class="text-xs text-zinc-500">Navegue pelas setas abaixo, setas laterais ou setas do teclado (Esquerda/Direita)</p>
+                    </div>
+                    
+                    <!-- Navigation Controls -->
+                    <div class="flex items-center space-x-4">
+                        <button onclick="prevImage()" class="p-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-lg border border-zinc-200 transition duration-150" title="Imagem Anterior">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        </button>
+                        <span id="img-counter" class="text-sm font-medium text-zinc-700 code-font bg-zinc-50 px-3 py-1.5 border border-zinc-200 rounded-md">
+                            Imagem 1 de 8
+                        </span>
+                        <button onclick="nextImage()" class="p-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-lg border border-zinc-200 transition duration-150" title="Próxima Imagem">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2-Column Responsive Grid: Image on Left, Performance & User Profile on Right -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    <!-- Coluna da Esquerda: Imagem em Análise -->
+                    <div class="lg:col-span-6 flex flex-col">
+                        <div class="relative bg-zinc-50 border border-zinc-200 rounded-xl overflow-hidden flex items-center justify-center p-4 h-full min-h-[380px] md:min-h-[440px]">
+                            <img id="main-image" src="" alt="Imagem em análise" class="max-h-[380px] object-contain rounded-lg border border-zinc-200 shadow-md max-w-full cursor-zoom-in transition hover:opacity-95" onclick="openLightboxMainImage()">
+                            
+                            <!-- Floating Gabarito Badge -->
+                            <div class="absolute top-4 right-4 z-10">
+                                <span id="gabarito-badge" class="px-3.5 py-1.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-sm border">
+                                    --
+                                </span>
+                            </div>
+
+                            <span class="absolute bottom-3 left-3 text-[11px] text-zinc-400 bg-white/90 backdrop-blur px-2 py-0.5 rounded border border-zinc-200 shadow-xs">
+                                Clique na foto para expandir
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Coluna da Direita: Performance da IA & Perfil Médio com Switch -->
+                    <div class="lg:col-span-6 flex flex-col justify-between space-y-4">
+                        
+                        <!-- Card 1: Comparativo / Performance da IA vs Humanos -->
+                        <div class="p-5 bg-gradient-to-br from-indigo-50/70 to-slate-50 border border-indigo-100 rounded-xl shadow-xs flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-900">Vantagem do Modelo Forense</span>
+                                </div>
+                                <span id="ia-advantage-badge" class="text-sm sm:text-base font-black px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-sm code-font tracking-tight">
+                                    +12.1% Superior
+                                </span>
+                            </div>
+
+                            <!-- Comparativo Visual -->
+                            <div class="space-y-3 my-2">
+                                <div>
+                                    <div class="flex justify-between items-center text-xs mb-1">
+                                        <span class="font-bold text-zinc-700 flex items-center gap-1.5">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span> Confiança do Modelo Forense
+                                        </span>
+                                        <span id="model-advantage-score" class="text-base sm:text-lg font-black text-indigo-700 code-font">91.24%</span>
+                                    </div>
+                                    <div class="w-full bg-indigo-100 rounded-full h-3 p-0.5">
+                                        <div id="bar-model-advantage" class="bg-indigo-600 h-2 rounded-full transition-all duration-500" style="width: 91.24%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-center text-xs mb-1">
+                                        <span class="font-bold text-zinc-600 flex items-center gap-1.5">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-zinc-400"></span> Acerto do Público Humano
+                                        </span>
+                                        <span id="human-advantage-score" class="text-base sm:text-lg font-black text-zinc-700 code-font">79.12%</span>
+                                    </div>
+                                    <div class="w-full bg-zinc-200 rounded-full h-3 p-0.5">
+                                        <div id="bar-human-advantage" class="bg-zinc-500 h-2 rounded-full transition-all duration-500" style="width: 79.12%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p id="ia-advantage-desc" class="text-xs text-indigo-900/80 mt-2 bg-white/80 p-2.5 rounded-lg border border-indigo-100 leading-relaxed font-medium">
+                                O algoritmo identificou as anomalias estruturais com 91.24% de precisão, superando a taxa média de acerto dos alunos em +12.12%.
+                            </p>
+                        </div>
+
+                        <!-- Card 2: Perfil Médio dos Usuários com Switch Interativo ("botãozinho flintons") -->
+                        <div class="p-5 bg-white border border-zinc-200 rounded-xl shadow-xs flex flex-col justify-between flex-grow">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-100">
+                                <div>
+                                    <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-700">Perfil Médio dos Participantes</h3>
+                                    <p class="text-[11px] text-zinc-400">Estatísticas do grupo nesta imagem</p>
+                                </div>
+
+                                <!-- Switch Toggle ("botãozinho flintons") -->
+                                <div class="inline-flex bg-zinc-100 p-1 rounded-lg border border-zinc-200 self-start sm:self-auto">
+                                    <button type="button" id="btn-profile-acertou" onclick="toggleUserProfile('acertou')" class="px-3 py-1 text-xs font-semibold rounded-md transition-all duration-200 bg-white text-emerald-700 shadow-sm border border-emerald-200 flex items-center gap-1">
+                                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                        <span id="label-profile-acertou">Acertou (72)</span>
+                                    </button>
+                                    <button type="button" id="btn-profile-errou" onclick="toggleUserProfile('errou')" class="px-3 py-1 text-xs font-semibold rounded-md transition-all duration-200 text-zinc-500 hover:text-zinc-800 flex items-center gap-1">
+                                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                        <span id="label-profile-errou">Errou (19)</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Profile Grid -->
+                            <div class="grid grid-cols-2 gap-3 my-3">
+                                <!-- Conhecimento IA -->
+                                <div class="p-3 bg-zinc-50 border border-zinc-200 rounded-lg">
+                                    <span class="text-[11px] text-zinc-500 font-bold block">Nível Médio em IA</span>
+                                    <span id="profile-avg-ia" class="text-xl font-black text-zinc-900 code-font block mt-0.5">3.39 / 5.0</span>
+                                    <span id="profile-pred-ia" class="text-[11px] text-zinc-500 block truncate font-medium">Predom: 3 - Médio</span>
+                                </div>
+
+                                <!-- Tempo Internet -->
+                                <div class="p-3 bg-zinc-50 border border-zinc-200 rounded-lg">
+                                    <span class="text-[11px] text-zinc-500 font-bold block">Tempo na Internet</span>
+                                    <span id="profile-avg-net" class="text-xl font-black text-zinc-900 code-font block mt-0.5">5 - 6 Horas</span>
+                                    <span id="profile-pred-net" class="text-[11px] text-zinc-500 block truncate font-medium">Média: ~5.6h diárias</span>
+                                </div>
+
+                                <!-- Uso de Ferramenta -->
+                                <div class="p-3 bg-zinc-50 border border-zinc-200 rounded-lg">
+                                    <span class="text-[11px] text-zinc-500 font-bold block">Adesão à Ferramenta</span>
+                                    <span id="profile-tool-pct" class="text-xl font-black text-indigo-600 code-font block mt-0.5">94.4%</span>
+                                    <span id="profile-tool-count" class="text-[11px] text-zinc-500 block truncate font-medium">68 usaram o scanner</span>
+                                </div>
+
+                                <!-- Média Global no Teste -->
+                                <div class="p-3 bg-zinc-50 border border-zinc-200 rounded-lg">
+                                    <span class="text-[11px] text-zinc-500 font-bold block">Nota Geral no Teste</span>
+                                    <span id="profile-avg-score" class="text-xl font-black text-emerald-600 code-font block mt-0.5">5.51 / 8</span>
+                                    <span id="profile-score-pct" class="text-[11px] text-zinc-500 block truncate font-medium">68.9% de acerto global</span>
+                                </div>
+                            </div>
+
+                            <div id="profile-highlight-box" class="text-[11px] py-1.5 px-3 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between">
+                                <span id="profile-highlight-text">Alunos com maior adesão à ferramenta acertaram com mais frequência.</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 2: Percepção Humana vs Veredito do Modelo -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Sub-bloco Humano -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 flex flex-col justify-between glow-card">
+                    <div>
+                        <div class="border-b border-zinc-200 pb-3 mb-4">
+                            <h2 class="text-lg font-semibold text-zinc-800">Percepção Humana</h2>
+                            <p class="text-xs text-zinc-500">Resultados coletados dos 91 alunos da pesquisa</p>
+                        </div>
+                        
+                        <!-- Human Verdict Alert Badge -->
+                        <div class="mb-6 flex justify-center">
+                            <div id="human-verdict-alert" class="w-full text-center py-4 rounded-xl border border-dashed flex flex-col items-center justify-center space-y-1">
+                                <span class="text-xs uppercase tracking-wider text-zinc-500 font-medium">Resultado da Análise Humana</span>
+                                <span id="human-verdict-status" class="text-lg font-bold">Carregando...</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress bars -->
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs text-zinc-500 mb-1">
+                                    <span>Identificaram como IA (Artificial)</span>
+                                    <span id="human-pct-ia" class="font-semibold text-zinc-700">--</span>
+                                </div>
+                                <div class="w-full bg-zinc-100 rounded-full h-3.5 p-0.5 border border-zinc-200">
+                                    <div id="bar-human-ia" class="bg-indigo-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs text-zinc-500 mb-1">
+                                    <span>Identificaram como Procedência Real (Foto)</span>
+                                    <span id="human-pct-real" class="font-semibold text-zinc-700">--</span>
+                                </div>
+                                <div class="w-full bg-zinc-100 rounded-full h-3.5 p-0.5 border border-zinc-200">
+                                    <div id="bar-human-real" class="bg-zinc-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-zinc-200 flex justify-between items-center text-xs text-zinc-500">
+                        <span>Total de Respostas: 91</span>
+                        <span id="human-accuracy-badge" class="font-medium px-2.5 py-1 rounded bg-zinc-100 text-zinc-700 border border-zinc-200">Acertos: --</span>
+                    </div>
+                </div>
+
+                <!-- Sub-bloco IA (Painel Multimodelo) -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                    <div class="border-b border-zinc-200 pb-3 mb-4">
+                        <h2 class="text-lg font-semibold text-zinc-800">Veredito do Modelo</h2>
+                        <p class="text-xs text-zinc-500">Classificação integrada de redes neurais e métricas forenses</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-6 items-center">
+                        <!-- Circular Donut Veredito Indicator -->
+                        <div class="relative flex items-center justify-center w-36 h-36 flex-shrink-0">
+                            <!-- SVG Circle Background & Progress -->
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f4f4f5" stroke-width="10"></circle>
+                                <circle id="model-donut-fill" cx="50" cy="50" r="40" fill="transparent" stroke="#dc2626" stroke-width="10" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="transition-all duration-500"></circle>
+                            </svg>
+                            <div class="absolute flex flex-col items-center justify-center text-center">
+                                <span id="model-veredito-pct" class="text-2xl font-bold text-zinc-900 code-font">--%</span>
+                                <span id="model-veredito-risk" class="text-[9px] uppercase tracking-wider font-semibold text-zinc-500">Risco</span>
+                            </div>
+                        </div>
+
+                        <!-- Multimodel auxiliary cards - INCREASED SIZE & REMOVED SUBTEXT -->
+                        <div class="flex-grow w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- IA Principal -->
+                            <div class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl flex flex-col justify-between min-h-[90px] shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-bold text-zinc-700">IA Principal</span>
+                                    <span id="risk-badge-principal" class="text-[10px] px-2 py-0.5 rounded font-bold uppercase">--</span>
+                                </div>
+                                <div class="text-2xl font-extrabold text-zinc-900 code-font mt-2" id="pct-principal">--%</div>
+                            </div>
+                            
+                            <!-- IA Geral -->
+                            <div class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl flex flex-col justify-between min-h-[90px] shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-bold text-zinc-700">IA Geral</span>
+                                    <span id="risk-badge-geral" class="text-[10px] px-2 py-0.5 rounded font-bold uppercase">--</span>
+                                </div>
+                                <div class="text-2xl font-extrabold text-zinc-900 code-font mt-2" id="pct-geral">--%</div>
+                            </div>
+
+                            <!-- IA Multicategoria -->
+                            <div class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl flex flex-col justify-between min-h-[90px] shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-bold text-zinc-700">IA Multicat.</span>
+                                    <span id="risk-badge-multicat" class="text-[10px] px-2 py-0.5 rounded font-bold uppercase">--</span>
+                                </div>
+                                <div class="text-2xl font-extrabold text-zinc-900 code-font mt-2" id="pct-multicat">--%</div>
+                            </div>
+
+                            <!-- IA Face Detection -->
+                            <div class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl flex flex-col justify-between min-h-[90px] shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-bold text-zinc-700">IA Face Det.</span>
+                                    <span id="risk-badge-face" class="text-[10px] px-2 py-0.5 rounded font-bold uppercase">--</span>
+                                </div>
+                                <div class="text-2xl font-extrabold text-zinc-900 code-font mt-2" id="pct-face">--%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 3: Análise Forense Visível - INCREASED VISIBILITY SIZE -->
+            <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                <div class="border-b border-zinc-200 pb-3 mb-6">
+                    <h2 class="text-lg font-semibold text-zinc-800">Análise Forense Visível</h2>
+                    <p class="text-xs text-zinc-500">Mapas de calor de compressão, gradiente, ruídos SRM do sensor e espectro FFT gerados pelos algoritmos</p>
+                </div>
+
+                <!-- Forensic Composite Image Container (max-h increased to 750px for better visibility) -->
+                <div class="relative bg-zinc-50 border border-zinc-200 rounded-lg overflow-hidden flex flex-col items-center justify-center p-4">
+                    <img id="forensic-composite" src="" alt="Painel forense" class="max-h-[750px] w-full object-contain rounded border border-zinc-200 shadow-md cursor-zoom-in transition hover:opacity-95" onclick="openLightbox()">
+                    
+                    <div class="mt-4 flex flex-wrap justify-center gap-4 text-xs text-zinc-500 font-mono">
+                        <span class="flex items-center"><span class="w-2.5 h-2.5 bg-indigo-600 rounded-full mr-1.5"></span>1. Sinal Original</span>
+                        <span class="flex items-center"><span class="w-2.5 h-2.5 bg-indigo-600 rounded-full mr-1.5"></span>2. Mapa de Gradientes</span>
+                        <span class="flex items-center"><span class="w-2.5 h-2.5 bg-indigo-600 rounded-full mr-1.5"></span>3. Compressão ELA</span>
+                        <span class="flex items-center"><span class="w-2.5 h-2.5 bg-indigo-600 rounded-full mr-1.5"></span>4. Ruído SRM (Alta Freq.)</span>
+                        <span class="flex items-center"><span class="w-2.5 h-2.5 bg-indigo-600 rounded-full mr-1.5"></span>5. Espectro FFT</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 4: Métricas do Sistema -->
+            <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                <div class="border-b border-zinc-200 pb-3 mb-6">
+                    <h2 class="text-lg font-semibold text-zinc-800">Métricas do Sistema</h2>
+                    <p class="text-xs text-zinc-500">Variâncias estatísticas e coeficientes de correlação de cores. Alertas em vermelho indicam desvio de risco alto.</p>
+                </div>
+
+                <!-- Grid of 9 Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Variância Ruído SRM -->
+                    <div id="card-metric-ruido" class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl transition-all duration-300">
+                        <span class="text-xs text-zinc-500 font-medium block">Variância Ruído SRM</span>
+                        <span id="metric-ruido-val" class="text-xl font-bold text-zinc-800 code-font mt-1 block">--</span>
+                        <span class="text-[10px] text-zinc-400 mt-1 block">Variância estatística do ruído do sensor SRM</span>
+                    </div>
+
+                    <!-- Simetria Fourier FFT -->
+                    <div id="card-metric-fft" class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl transition-all duration-300">
+                        <span class="text-xs text-zinc-500 font-medium block">Simetria Fourier (FFT)</span>
+                        <span id="metric-fft-val" class="text-xl font-bold text-zinc-800 code-font mt-1 block">--</span>
+                        <span class="text-[10px] text-zinc-400 mt-1 block">Coeficiente de simetria do espectro Fourier</span>
+                    </div>
+
+                    <!-- Aberração Cromática -->
+                    <div id="card-metric-aberration" class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl transition-all duration-300">
+                        <span class="text-xs text-zinc-500 font-medium block">Aberração Cromática</span>
+                        <span id="metric-aberration-val" class="text-xl font-bold text-zinc-800 code-font mt-1 block">--</span>
+                        <span class="text-[10px] text-zinc-400 mt-1 block">Gradiente espacial de dispersão cromática</span>
+                    </div>
+
+                    <!-- Correlação R-G -->
+                    <div id="card-metric-rg" class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl transition-all duration-300">
+                        <span class="text-xs text-zinc-500 font-medium block">Correlação R-G</span>
+                        <span id="metric-rg-val" class="text-xl font-bold text-zinc-800 code-font mt-1 block">--</span>
+                        <span class="text-[10px] text-zinc-400 mt-1 block">Correlação estatística entre canais Vermelho e Verde</span>
+                    </div>
+
+                    <!-- Correlação R-B -->
+                    <div id="card-metric-rb" class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl transition-all duration-300">
+                        <span class="text-xs text-zinc-500 font-medium block">Correlação R-B</span>
+                        <span id="metric-rb-val" class="text-xl font-bold text-zinc-800 code-font mt-1 block">--</span>
+                        <span class="text-[10px] text-zinc-400 mt-1 block">Correlação estatística entre canais Vermelho e Azul</span>
+                    </div>
+
+                    <!-- Correlação G-B -->
+                    <div id="card-metric-gb" class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl transition-all duration-300">
+                        <span class="text-xs text-zinc-500 font-medium block">Correlação G-B</span>
+                        <span id="metric-gb-val" class="text-xl font-bold text-zinc-800 code-font mt-1 block">--</span>
+                        <span class="text-[10px] text-zinc-400 mt-1 block">Correlação estatística entre canais Verde e Azul</span>
+                    </div>
+
+                    <!-- Média de Gradientes -->
+                    <div id="card-metric-gradmean" class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl transition-all duration-300">
+                        <span class="text-xs text-zinc-500 font-medium block">Média de Gradientes</span>
+                        <span id="metric-gradmean-val" class="text-xl font-bold text-zinc-800 code-font mt-1 block">--</span>
+                        <span class="text-[10px] text-zinc-400 mt-1 block">Densidade de magnitude média de gradientes</span>
+                    </div>
+
+                    <!-- Desvio de Gradientes -->
+                    <div id="card-metric-gradstd" class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl transition-all duration-300">
+                        <span class="text-xs text-zinc-500 font-medium block">Desvio de Gradientes</span>
+                        <span id="metric-gradstd-val" class="text-xl font-bold text-zinc-800 code-font mt-1 block">--</span>
+                        <span class="text-[10px] text-zinc-400 mt-1 block">Desvio padrão das magnitudes de gradientes</span>
+                    </div>
+
+                    <!-- Média ELA % -->
+                    <div id="card-metric-ela" class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl transition-all duration-300">
+                        <span class="text-xs text-zinc-500 font-medium block">Média ELA %</span>
+                        <span id="metric-ela-val" class="text-xl font-bold text-zinc-800 code-font mt-1 block">--</span>
+                        <span class="text-[10px] text-zinc-400 mt-1 block">Taxa média de erro de nível de compressão</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 5: Indicadores Técnicos Detalhados - TEXT ONLY (Crops removed) -->
+            <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                <div class="border-b border-zinc-200 pb-3 mb-6">
+                    <h2 class="text-lg font-semibold text-zinc-800">Indicadores Técnicos Detalhados</h2>
+                    <p class="text-xs text-zinc-500">Análise descritiva e nível de desvio de cada indicador gerado pelos modelos estatísticos</p>
+                </div>
+
+                <!-- Dynamic container for indicators list -->
+                <div id="indicators-list" class="space-y-4">
+                    <!-- Generated via JS (Text Only) -->
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ==================== PÁGINA 2: DASHBOARD GERAL ==================== -->
+        <section id="page-dashboard" class="hidden space-y-8">
+            
+            <div class="border-b border-zinc-200 pb-4">
+                <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Dashboard Geral de Resultados</h1>
+                <p class="text-sm text-zinc-500 mt-1">Estatísticas consolidadas da pesquisa acadêmica e comparativo geral de acertos.</p>
+            </div>
+
+            <!-- KPIs Grid (4x2 Grid = 8 KPI Cards) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 1. Total Responses -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-5 glow-card">
+                    <div class="flex items-center justify-between text-zinc-500 mb-2">
+                        <span class="text-sm font-medium">Total de Respostas</span>
+                        <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i>
+                    </div>
+                    <div id="kpi-responses" class="text-3xl font-extrabold text-zinc-900 code-font">91</div>
+                    <p class="text-xs text-zinc-400 mt-1">Alunos participantes da pesquisa</p>
+                </div>
+
+                <!-- 2. Overall Accuracy -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-5 glow-card">
+                    <div class="flex items-center justify-between text-zinc-500 mb-2">
+                        <span class="text-sm font-medium">Acerto Humano Geral</span>
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+                    </div>
+                    <div id="kpi-accuracy" class="text-3xl font-extrabold text-zinc-900 code-font">65.52%</div>
+                    <p class="text-xs text-zinc-400 mt-1">Taxa média de acerto global</p>
+                </div>
+
+                <!-- 3. IA Knowledge (Dedicated Card) -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-5 glow-card">
+                    <div class="flex items-center justify-between text-zinc-500 mb-2">
+                        <span class="text-sm font-medium">Conhecimento Médio em IA</span>
+                        <i data-lucide="brain-circuit" class="w-5 h-5 text-indigo-600"></i>
+                    </div>
+                    <div id="kpi-ia-knowledge" class="text-3xl font-extrabold text-zinc-900 code-font">3.3 <span class="text-sm text-zinc-400 font-normal">/ 5.0</span></div>
+                    <p class="text-xs text-zinc-400 mt-1" id="kpi-ia-knowledge-details">Predom: 3 - Médio | 5.5% Especialistas</p>
+                </div>
+
+                <!-- 4. Daily Internet Time (Dedicated Card) -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-5 glow-card">
+                    <div class="flex items-center justify-between text-zinc-500 mb-2">
+                        <span class="text-sm font-medium">Tempo Diário na Internet</span>
+                        <i data-lucide="globe" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <div id="kpi-internet" class="text-2xl font-extrabold text-zinc-900 code-font">3 - 4 Horas</div>
+                    <p class="text-xs text-zinc-400 mt-1" id="kpi-internet-details">Média: ~5.5h/dia (59% > 5h)</p>
+                </div>
+
+                <!-- 5. Predominant Score KPI -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-5 glow-card">
+                    <div class="flex items-center justify-between text-zinc-500 mb-2">
+                        <span class="text-sm font-medium">Nota Predominante</span>
+                        <i data-lucide="trophy" class="w-5 h-5 text-amber-500"></i>
+                    </div>
+                    <div id="kpi-score" class="text-3xl font-extrabold text-zinc-900 code-font">6 / 8</div>
+                    <p class="text-xs text-zinc-400 mt-1" id="kpi-score-details">30 alunos (33.0% da turma)</p>
+                </div>
+
+                <!-- 6. IA Images Accuracy KPI -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-5 glow-card">
+                    <div class="flex items-center justify-between text-zinc-500 mb-2">
+                        <span class="text-sm font-medium">Acertos em Imagens IA</span>
+                        <i data-lucide="sparkles" class="w-5 h-5 text-purple-600"></i>
+                    </div>
+                    <div id="kpi-ia-acc" class="text-3xl font-extrabold text-zinc-900 code-font">65.11%</div>
+                    <p class="text-xs text-zinc-400 mt-1">vs 65.93% em Fotos Reais</p>
+                </div>
+
+                <!-- 7. Easiest Image KPI -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-5 glow-card">
+                    <div class="flex items-center justify-between text-zinc-500 mb-2">
+                        <span class="text-sm font-medium">Imagem mais Fácil</span>
+                        <i data-lucide="check" class="w-5 h-5 text-emerald-600"></i>
+                    </div>
+                    <div id="kpi-easiest" class="text-lg font-bold text-zinc-900 truncate">Imagem 2 (Real)</div>
+                    <p class="text-xs text-zinc-400 mt-1" id="kpi-easiest-pct">Taxa de acerto: 91.21%</p>
+                </div>
+
+                <!-- 8. Most Deceptive Image KPI -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-5 glow-card">
+                    <div class="flex items-center justify-between text-zinc-500 mb-2">
+                        <span class="text-sm font-medium">Imagem mais Enganosa</span>
+                        <i data-lucide="eye-off" class="w-5 h-5 text-red-600"></i>
+                    </div>
+                    <div id="kpi-deceptive" class="text-lg font-bold text-zinc-900 truncate">Imagem 8 (Real)</div>
+                    <p class="text-xs text-zinc-400 mt-1" id="kpi-deceptive-pct">Taxa de acerto: 39.56% (60.4% erros)</p>
+                </div>
+            </div>
+
+            <!-- Chart JS Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 1. Taxa de Acerto Humana Imagem por Imagem -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card lg:col-span-2">
+                    <h3 class="text-md font-semibold text-zinc-800 mb-4 font-bold flex items-center justify-between">
+                        <span>Taxa de Acerto Humano vs Gabarito por Imagem</span>
+                        <span class="text-xs font-normal text-zinc-400">Linha vermelha = Média Geral (65.5%)</span>
+                    </h3>
+                    <div class="relative h-[300px] w-full">
+                        <canvas id="chart-image-accuracy"></canvas>
+                    </div>
+                </div>
+
+                <!-- 2. Impacto do Uso de Ferramentas Forenses (Com Tool vs Sem Tool) -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card lg:col-span-2">
+                    <h3 class="text-md font-semibold text-zinc-800 mb-4 font-bold flex items-center justify-between">
+                        <span>Impacto no Acerto: Com Uso de Ferramenta vs Apenas Olho Nu</span>
+                        <span class="text-xs font-normal text-zinc-400">Compara a acurácia de quem usou a ferramenta de análise em cada foto</span>
+                    </h3>
+                    <div class="relative h-[300px] w-full">
+                        <canvas id="chart-tool-impact"></canvas>
+                    </div>
+                </div>
+
+                <!-- 3. Histograma de Distribuição das Notas (0 a 8 acertos) -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                    <h3 class="text-md font-semibold text-zinc-800 mb-4 font-bold">Distribuição das Notas (Acertos de 0 a 8)</h3>
+                    <div class="relative h-[250px] w-full">
+                        <canvas id="chart-score-histogram"></canvas>
+                    </div>
+                </div>
+
+                <!-- 4. Desempenho: Imagens IA vs Imagens Reais -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                    <h3 class="text-md font-semibold text-zinc-800 mb-4 font-bold">Acurácia: Imagens IA vs Imagens Reais</h3>
+                    <div class="relative h-[250px] w-full flex items-center justify-center">
+                        <canvas id="chart-ia-vs-real"></canvas>
+                    </div>
+                </div>
+
+                <!-- 5. Conhecimento IA -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                    <h3 class="text-md font-semibold text-zinc-800 mb-4 font-bold">Nível de Conhecimento em IA dos Alunos</h3>
+                    <div class="relative h-[250px] w-full flex items-center justify-center">
+                        <canvas id="chart-knowledge"></canvas>
+                    </div>
+                </div>
+
+                <!-- 6. Tempo de Uso Internet -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                    <h3 class="text-md font-semibold text-zinc-800 mb-4 font-bold">Média de Horas Diárias na Internet</h3>
+                    <div class="relative h-[250px] w-full">
+                        <canvas id="chart-internet"></canvas>
+                    </div>
+                </div>
+
+                <!-- 7. Acurácia por Tempo de Uso de Internet -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                    <h3 class="text-md font-semibold text-zinc-800 mb-4 font-bold">Taxa de Acerto por Tempo Diário na Internet</h3>
+                    <div class="relative h-[250px] w-full">
+                        <canvas id="chart-accuracy-by-internet"></canvas>
+                    </div>
+                </div>
+
+                <!-- 8. Rosca de Acertos vs Erros Totais -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-6 glow-card">
+                    <h3 class="text-md font-semibold text-zinc-800 mb-4 font-bold">Total Geral de Acertos vs Erros</h3>
+                    <div class="relative h-[250px] w-full flex items-center justify-center">
+                        <canvas id="chart-total-verdicts"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ==================== PÁGINA 3: RESPOSTAS INDIVIDUAIS ==================== -->
+        <section id="page-respostas" class="hidden space-y-8">
+            
+            <div class="border-b border-zinc-200 pb-4">
+                <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Respostas Individuais & Feedback</h1>
+                <p class="text-sm text-zinc-500 mt-1">Todas as 91 respostas coletadas, agrupadas pelo sentimento dos comentários por imagem (blocos do formulário). Cada card exibe as respostas e comentários das 8 imagens de forma visível.</p>
+            </div>
+
+            <!-- Filters Area -->
+            <div class="bg-white border border-zinc-200 rounded-xl p-5 glow-card">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <!-- Search Name -->
+                    <div>
+                        <label for="filter-name" class="block text-xs font-medium text-zinc-500 mb-1.5">Buscar por Nome</label>
+                        <div class="relative">
+                            <input type="text" id="filter-name" oninput="applyFilters()" placeholder="Digite um nome..." class="w-full bg-zinc-50 border border-zinc-200 rounded-lg py-2 pl-9 pr-4 text-sm text-zinc-700 focus:outline-none focus:border-indigo-400 transition">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-400">
+                                <i data-lucide="search" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sentiment Filter -->
+                    <div>
+                        <label for="filter-sentiment" class="block text-xs font-medium text-zinc-500 mb-1.5">Sentimento do Feedback</label>
+                        <select id="filter-sentiment" onchange="applyFilters()" class="w-full bg-zinc-50 border border-zinc-200 rounded-lg py-2 px-3 text-sm text-zinc-700 focus:outline-none focus:border-indigo-400 transition cursor-pointer">
+                            <option value="All">Todos os Sentimentos</option>
+                            <option value="Positivo">Positivo</option>
+                            <option value="Neutro">Neutro</option>
+                            <option value="Negativo">Negativo</option>
+                        </select>
+                    </div>
+
+                    <!-- Internet Filter -->
+                    <div>
+                        <label for="filter-internet" class="block text-xs font-medium text-zinc-500 mb-1.5">Tempo Diário de Internet</label>
+                        <select id="filter-internet" onchange="applyFilters()" class="w-full bg-zinc-50 border border-zinc-200 rounded-lg py-2 px-3 text-sm text-zinc-700 focus:outline-none focus:border-indigo-400 transition cursor-pointer">
+                            <option value="All">Todos os Tempos</option>
+                            <option value="9+">9+ Horas</option>
+                            <option value="7 - 8">7 - 8 Horas</option>
+                            <option value="5 - 6">5 - 6 Horas</option>
+                            <option value="3 - 4">3 - 4 Horas</option>
+                            <option value="0 - 2">0 - 2 Horas</option>
+                        </select>
+                    </div>
+
+                    <!-- Results Counter -->
+                    <div class="text-right">
+                        <span id="results-counter" class="text-sm font-medium text-zinc-500">
+                            Exibindo <span id="results-count" class="text-zinc-900 font-bold">91</span> alunos
+                        </span>
+                    </div>
+                </div>
+            <!-- Global Cards Legend Bar -->
+            <div class="bg-white border border-zinc-200 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 shadow-sm">
+                <span class="font-bold text-zinc-700 flex items-center gap-1.5">
+                    <i data-lucide="info" class="w-4 h-4 text-indigo-500"></i> Legenda dos Blocos:
+                </span>
+                <div class="flex flex-wrap items-center gap-x-5 gap-y-1">
+                    <span class="flex items-center gap-1"><span class="text-emerald-600 font-bold">✓</span> Acertou</span>
+                    <span class="flex items-center gap-1"><span class="text-red-500 font-bold">✗</span> Errou</span>
+                    <span class="flex items-center gap-1"><span class="text-violet-600 font-bold">IA</span> / <span class="text-blue-600 font-bold">Real</span> = Voto do Aluno</span>
+                    <span class="flex items-center gap-1"><span class="text-indigo-600 font-semibold bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded text-[10px]">Tool</span> = Usou Ferramenta</span>
+                </div>
+            </div>
+
+            <!-- Cards Container (grouped by sentiment) -->
+            <div id="cards-container" class="space-y-10">
+                <!-- Groups rendered by JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="cards-empty-state" class="hidden py-16 text-center flex flex-col items-center justify-center">
+                <i data-lucide="search-x" class="w-12 h-12 mb-3 text-zinc-300"></i>
+                <p class="text-zinc-400 font-medium">Nenhum aluno corresponde aos filtros aplicados.</p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-zinc-200 bg-white py-6 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-zinc-550 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span>© 2026 Plataforma Forense Escolar. Todos os direitos reservados.</span>
+            <span class="code-font text-[10px] bg-zinc-50 px-3 py-1 border border-zinc-200 rounded text-zinc-500">
+                Sinal SRM / FFT de Frequências / Compressão ELA / Cromática
+            </span>
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX MODAL (Image Zoom View) -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 bg-black/95 hidden items-center justify-center p-4">
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 p-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-full transition">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <div class="max-w-4xl max-h-[85vh] w-full h-full flex flex-col items-center justify-center">
+            <img id="lightbox-image" src="" alt="Zoom análise forense" class="max-w-full max-h-full object-contain rounded border border-zinc-800">
+            <p class="text-zinc-400 text-xs mt-3 code-font" id="lightbox-caption">Zoom da Análise Forense</p>
+        </div>
+    </div>
+
+    <!-- Data variables -->
+    <script src="survey_data.js"></script>
+    <!-- Frontend main logic script -->
+    <script src="app.js"></script>
+</body>
+</html>

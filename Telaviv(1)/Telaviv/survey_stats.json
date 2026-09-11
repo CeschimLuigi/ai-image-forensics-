@@ -1,0 +1,65 @@
+{
+    "total_responses": 91,
+    "overall_accuracy": 65.52197802197803,
+    "most_deceptive_image": 8,
+    "image_accuracy": {
+        "1": 79.12087912087912,
+        "2": 91.20879120879121,
+        "3": 63.73626373626373,
+        "4": 70.32967032967034,
+        "5": 69.23076923076923,
+        "6": 56.043956043956044,
+        "7": 54.94505494505495,
+        "8": 39.56043956043956
+    },
+    "human_stats": {
+        "1": {
+            "real": 19,
+            "ia": 72,
+            "correct": 72,
+            "incorrect": 19
+        },
+        "2": {
+            "real": 83,
+            "ia": 8,
+            "correct": 83,
+            "incorrect": 8
+        },
+        "3": {
+            "real": 58,
+            "ia": 33,
+            "correct": 58,
+            "incorrect": 33
+        },
+        "4": {
+            "real": 27,
+            "ia": 64,
+            "correct": 64,
+            "incorrect": 27
+        },
+        "5": {
+            "real": 63,
+            "ia": 28,
+            "correct": 63,
+            "incorrect": 28
+        },
+        "6": {
+            "real": 40,
+            "ia": 51,
+            "correct": 51,
+            "incorrect": 40
+        },
+        "7": {
+            "real": 41,
+            "ia": 50,
+            "correct": 50,
+            "incorrect": 41
+        },
+        "8": {
+            "real": 36,
+            "ia": 55,
+            "correct": 36,
+            "incorrect": 55
+        }
+    }
+}
