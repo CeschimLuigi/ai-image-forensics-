@@ -81,3 +81,35 @@ jobs:
           name: log-da-falha
           path: latex/*.log
           if-no-files-found: ignore
+
+      # Prepara o PDF para o GitHub Pages. So o arquivo, sem pagina HTML:
+      # isto e canal de distribuicao do documento, nao site do projeto.
+      - name: Separar o PDF para publicacao
+        if: github.ref == 'refs/heads/main'
+        run: |
+          mkdir -p publicar
+          cp latex/projeto-pesquisa.pdf publicar/
+
+      - name: Empacotar para o Pages
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: publicar
+
+  # Publica o PDF num endereco fixo, sempre com a versao mais recente da main.
+  # Sem login, sem zip: e so abrir o link.
+  publicar:
+    name: GitHub Pages
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Publicar no Pages
+        id: deploy
+        uses: actions/deploy-pages@v5
